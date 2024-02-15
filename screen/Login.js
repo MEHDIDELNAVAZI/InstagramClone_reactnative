@@ -12,10 +12,7 @@ import {
 import { Formik } from "formik";
 import { StatusBar } from "expo-status-bar";
 
-function Login({ navigation }) {
-  const submitfunction = () => {
-    navigation.navigate("Home");
-  };
+function Login() {
   const styles = StyleSheet.create({
     loginview: {
       flex: 1,

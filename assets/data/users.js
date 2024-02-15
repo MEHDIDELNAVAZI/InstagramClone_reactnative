@@ -1,4 +1,4 @@
-export default  [
+export default [
   {
     username: "Tony",
     image: "https://randomuser.me/api/portraits/men/62.jpg",
@@ -30,6 +30,5 @@ export default  [
   {
     username: "Minnie",
     image: "https://randomuser.me/api/portraits/women/66.jpg",
-  }
-]
-
+  },
+];

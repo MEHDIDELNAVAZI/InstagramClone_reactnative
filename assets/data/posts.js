@@ -19,7 +19,7 @@ export default [
         user: Users[3].username,
         comment:
           "this is just a dummy comment for a dummy post in a dummy application!",
-      }
+      },
     ],
   },
   {
@@ -34,7 +34,7 @@ export default [
       {
         user: Users[2].username,
         comment: "comment",
-      }
+      },
     ],
   },
 ];
