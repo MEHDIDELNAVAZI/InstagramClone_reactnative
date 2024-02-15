@@ -8,8 +8,22 @@ import {
 } from "react-native";
 import React from "react";
 import { EvilIcons } from "@expo/vector-icons";
+import app from "../../firebase";
+import { getAuth, signOut } from "firebase/auth"; // Import the necessary functions from Firebase Authentication
 
 export default function Header({ navigation }) {
+  const handleSignOut = () => {
+    const auth = getAuth(app); // Get the authentication service instance
+    signOut(auth)
+      .then(() => {
+        console.log("User signed out successfully");
+        // You can perform additional actions after sign-out if needed
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+      });
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -18,7 +32,11 @@ export default function Header({ navigation }) {
         alignItems: "center",
       }}
     >
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          handleSignOut();
+        }}
+      >
         <Image
           source={require("../../assets/instalogo.png")}
           style={styles.logo}
@@ -33,9 +51,11 @@ export default function Header({ navigation }) {
         <TouchableOpacity>
           <EvilIcons name="heart" size={35} style={styles.icons} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {
-          navigation.push('Addnewpost')
-        }}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.push("Addnewpost");
+          }}
+        >
           <EvilIcons name="plus" size={35} style={styles.icons} />
         </TouchableOpacity>
         <View
