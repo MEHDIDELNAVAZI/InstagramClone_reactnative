@@ -21,7 +21,6 @@ export default function Loginscreen({ navigation }) {
   });
   const [loading, setLoading] = useState(false);
   const auth = getAuth(app);
-
   const Onlogin = async (email, password) => {
     setLoading(true); // Set loading to true when login process starts
     signInWithEmailAndPassword(auth, email, password)

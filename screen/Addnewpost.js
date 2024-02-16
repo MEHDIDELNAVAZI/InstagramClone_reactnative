@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
 
-export default function Addnewpost({navigation}) {
+export default function Addnewpost({ navigation }) {
   const imageplaceholder =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s";
   const [thumbnail, setthumbnail] = useState();
@@ -97,12 +97,7 @@ export default function Addnewpost({navigation}) {
                   }}
                 />
               </View>
-              <Divider
-                width={1}
-                style={{
-                  marginTop: 20,
-                }}
-              />
+              <Divider width={1} style={{}} />
 
               <View
                 style={{

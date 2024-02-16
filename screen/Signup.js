@@ -7,12 +7,15 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInput } from "react-native-gesture-handler";
 import app from "../firebase";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { doc, setDoc, addDoc ,collection } from "firebase/firestore";
 
 function Signup({ navigation }) {
   const Signupschema = Yup.object().shape({
@@ -28,21 +31,44 @@ function Signup({ navigation }) {
   });
   const [loading, setLoading] = useState(false);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  const onSignup = async (email, password) => {
+  const getrandomeimageprofile = async () => {
+    const res = await fetch("https://randomuser.me/api");
+    const data = res.json();
+    return data.result[0].picture.range;
+  };
+  const onSignup = async (email, password, username) => {
     setLoading(true); // Set loading to true when signup process starts
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        setLoading(false); // Set loading to false when signup process completes
-        navigation.push("Homescreen");
-      })
-      .catch((error) => {
-        setLoading(false); // Set loading to false if there's an error in the signup process
-        // Handle errors
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Sign up error:", errorCode, errorMessage);
+    try {
+      // Step 1: Sign up the user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      // Step 2: Add user details to Firestore
+      await setDoc(doc(db, "users", userCredential.user.email), {
+        owner_id: userCredential.user.uid,
+        usernmae: username,
+        email: userCredential.user.email,
       });
+      const userPostsRef = collection(
+        db,
+        "users",
+        userCredential.user.email,
+        "posts"
+      );
+      // Add a post document to the "posts" collection
+      await addDoc(userPostsRef, {
+        caption: "caption",
+        imageUrl: "imageUrl",
+      });
+
+      setLoading(false);
+    } catch (error) {
+      console.log("Error occurred when creating user: ", error);
+    }
   };
 
   return (
@@ -74,7 +100,7 @@ function Signup({ navigation }) {
           }}
           validationSchema={Signupschema}
           onSubmit={(values) => {
-            onSignup(values.email, values.password);
+            onSignup(values.email, values.password, values.username);
           }}
         >
           {({
@@ -175,7 +201,11 @@ function Signup({ navigation }) {
                   <ActivityIndicator color="white" />
                 ) : (
                   <Text
-                    style={{ color: "white", textAlign: "center", fontSize: 15 }}
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontSize: 15,
+                    }}
                   >
                     Signup
                   </Text>

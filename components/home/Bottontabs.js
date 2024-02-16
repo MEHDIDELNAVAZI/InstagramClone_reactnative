@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import React, { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
@@ -11,7 +18,7 @@ function Bottontabs() {
   const [activetab, setactivetab] = useState("Home");
   return (
     <>
-      <View style={styles.bottomtabs}>
+      <SafeAreaView style={styles.bottomtabs}>
         <TouchableOpacity
           onPress={() => {
             setactivetab("Home");
@@ -80,7 +87,7 @@ function Bottontabs() {
             }}
           />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -94,7 +101,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     flexDirection: "row",
     justifyContent: "space-around",
-    height: 50,
     backgroundColor: "black",
     zIndex: 200,
     width: "100%",
