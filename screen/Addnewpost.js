@@ -26,6 +26,19 @@ export default function Addnewpost({ navigation }) {
       .url("Image URL format is wrong")
       .required("Required"),
   });
+
+  // const userPostsRef = collection(
+  //   db,
+  //   "users",
+  //   userCredential.user.email,
+  //   "posts"
+  // );
+  // // Add a post document to the "posts" collection
+  // await addDoc(userPostsRef, {
+  //   caption: "caption",
+  //   imageUrl: "imageUrl",
+  // });
+
   return (
     <>
       <StatusBar style="light" />

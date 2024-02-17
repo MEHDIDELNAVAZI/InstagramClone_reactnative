@@ -6,16 +6,47 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { getFirestore } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import app from "../../firebase";
+import { getAuth } from "firebase/auth";
 
 function Bottontabs() {
   const [activetab, setactivetab] = useState("Home");
+  const [userprofileimage, setuserprofileimage] = useState(null);
+  const db = getFirestore(app);
+
+  async function getUserProfileImage(emailUser) {
+    const q = query(collection(db, "users"), where("email", "==", emailUser));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        const userProfileImage = userData.profileimage;
+        setuserprofileimage(userProfileImage);
+      });
+    } else {
+      console.log("No matching documents.");
+    
+    }
+  }
+  useEffect(() => {
+    const auth = getAuth(app);
+    const user = auth.currentUser;
+    if (user !== null) {
+      const emailUser = user.email;
+      getUserProfileImage(emailUser);
+    }
+  }, []);
+
+
   return (
     <>
       <SafeAreaView style={styles.bottomtabs}>
@@ -76,16 +107,26 @@ function Bottontabs() {
             setactivetab("profile");
           }}
         >
-          <Image
-            style={
-              activetab === "profile"
-                ? [styles.profileimage, styles.activeprofileimage]
-                : styles.profileimage
-            }
-            source={{
-              uri: "https://randomuser.me/api/portraits/women/20.jpg",
-            }}
-          />
+          {userprofileimage ? (
+            <Image
+              style={
+                activetab === "profile"
+                  ? [styles.profileimage, styles.activeprofileimage]
+                  : styles.profileimage
+              }
+              source={{
+                uri: { userprofileimage },
+              }}
+            />
+          ) : (
+            <Text
+              style={{
+                color: "white",
+              }}
+            >
+              laoding
+            </Text>
+          )}
         </TouchableOpacity>
       </SafeAreaView>
     </>

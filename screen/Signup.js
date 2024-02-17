@@ -15,7 +15,7 @@ import { TextInput } from "react-native-gesture-handler";
 import app from "../firebase";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc, addDoc ,collection } from "firebase/firestore";
+import { doc, setDoc, addDoc, collection } from "firebase/firestore";
 
 function Signup({ navigation }) {
   const Signupschema = Yup.object().shape({
@@ -33,11 +33,12 @@ function Signup({ navigation }) {
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const getrandomeimageprofile = async () => {
+  const getrandomimageprofile = async () => {
     const res = await fetch("https://randomuser.me/api");
-    const data = res.json();
-    return data.result[0].picture.range;
+    const data = await res.json();
+    return JSON.stringify(data.results[0].picture.large);
   };
+
   const onSignup = async (email, password, username) => {
     setLoading(true); // Set loading to true when signup process starts
     try {
@@ -48,23 +49,13 @@ function Signup({ navigation }) {
         password
       );
       // Step 2: Add user details to Firestore
+      const imageUrl = await getrandomimageprofile(); // Fetch the random image URL
       await setDoc(doc(db, "users", userCredential.user.email), {
         owner_id: userCredential.user.uid,
         usernmae: username,
         email: userCredential.user.email,
+        profileimage: imageUrl,
       });
-      const userPostsRef = collection(
-        db,
-        "users",
-        userCredential.user.email,
-        "posts"
-      );
-      // Add a post document to the "posts" collection
-      await addDoc(userPostsRef, {
-        caption: "caption",
-        imageUrl: "imageUrl",
-      });
-
       setLoading(false);
     } catch (error) {
       console.log("Error occurred when creating user: ", error);
