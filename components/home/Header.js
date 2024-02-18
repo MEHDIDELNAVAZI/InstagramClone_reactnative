@@ -11,7 +11,7 @@ import { EvilIcons } from "@expo/vector-icons";
 import app from "../../firebase";
 import { getAuth, signOut } from "firebase/auth"; // Import the necessary functions from Firebase Authentication
 
-export default function Header({ navigation }) {
+export default function Header({ navigation, useremail }) {
   const handleSignOut = () => {
     const auth = getAuth(app); // Get the authentication service instance
     signOut(auth)
@@ -51,13 +51,7 @@ export default function Header({ navigation }) {
         <TouchableOpacity>
           <EvilIcons name="heart" size={35} style={styles.icons} />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.push("Addnewpost");
-          }}
-        >
-          <EvilIcons name="plus" size={35} style={styles.icons} />
-        </TouchableOpacity>
+
         <View
           style={{
             position: "relative",

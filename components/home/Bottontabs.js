@@ -18,45 +18,34 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import app from "../../firebase";
 import { getAuth } from "firebase/auth";
 
-function Bottontabs() {
-  const [activetab, setactivetab] = useState("Home");
+function Bottontabs({ setselectedtab, selectedtab, navigation, useremail }) {
   const [userprofileimage, setuserprofileimage] = useState(null);
   const db = getFirestore(app);
 
-  async function getUserProfileImage(emailUser) {
-    const q = query(collection(db, "users"), where("email", "==", emailUser));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        const userProfileImage = userData.profileimage;
-        setuserprofileimage(userProfileImage);
-      });
-    } else {
-      console.log("No matching documents.");
-    
-    }
-  }
-  useEffect(() => {
-    const auth = getAuth(app);
-    const user = auth.currentUser;
-    if (user !== null) {
-      const emailUser = user.email;
-      getUserProfileImage(emailUser);
-    }
-  }, []);
-
+  // async function getUserProfileImage(emailUser) {
+  //   const q = query(collection(db, "users"), where("email", "==", emailUser));
+  //   const querySnapshot = await getDocs(q);
+  //   if (!querySnapshot.empty) {
+  //     querySnapshot.forEach((doc) => {
+  //       const userData = doc.data();
+  //       const userProfileImage = userData.profileimage;
+  //       setuserprofileimage(userProfileImage);
+  //     });
+  //   } else {
+  //     console.log("No matching documents.");
+  //   }
+  // }
 
   return (
     <>
       <SafeAreaView style={styles.bottomtabs}>
         <TouchableOpacity
           onPress={() => {
-            setactivetab("Home");
+            setselectedtab("Home");
           }}
         >
           <Ionicons
-            name={activetab === "Home" ? "home" : "home-outline"}
+            name={selectedtab === "Home" ? "home" : "home-outline"}
             size={24}
             color="white"
           />
@@ -64,10 +53,10 @@ function Bottontabs() {
 
         <TouchableOpacity
           onPress={() => {
-            setactivetab("Search");
+            setselectedtab("Explorer");
           }}
         >
-          {activetab === "Search" ? (
+          {selectedtab === "Search" ? (
             <Ionicons name="search-circle-sharp" size={35} color="white" />
           ) : (
             <Ionicons name="search-circle-outline" size={35} color="white" />
@@ -76,10 +65,20 @@ function Bottontabs() {
 
         <TouchableOpacity
           onPress={() => {
-            setactivetab("Reels");
+            navigation.navigate("Addnewpost", {
+              useremail: useremail,
+            });
           }}
         >
-          {activetab === "Reels" ? (
+          <EvilIcons name="plus" size={35} color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setselectedtab("Reels");
+          }}
+        >
+          {selectedtab === "Reels" ? (
             <FontAwesome name="video-camera" size={24} color="white" />
           ) : (
             <Feather name="video" size={24} color="white" />
@@ -88,29 +87,13 @@ function Bottontabs() {
 
         <TouchableOpacity
           onPress={() => {
-            setactivetab("Shop");
-          }}
-        >
-          {activetab === "Shop" ? (
-            <Entypo
-              name="shopping-cart"
-              size={24}
-              color="white"
-              style={styles.icons}
-            />
-          ) : (
-            <AntDesign name="shoppingcart" size={24} color="white" />
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setactivetab("profile");
+            setselectedtab("Profile");
           }}
         >
           {userprofileimage ? (
             <Image
               style={
-                activetab === "profile"
+                selectedtab === "Profile"
                   ? [styles.profileimage, styles.activeprofileimage]
                   : styles.profileimage
               }

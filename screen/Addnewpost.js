@@ -10,11 +10,15 @@ import {
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import Header from "../components/addnewpost/Header";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
+import app from "../firebase";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 
-export default function Addnewpost({ navigation }) {
+export default function Addnewpost({ navigation, route }) {
+  const { useremail } = route.params;
+
   const imageplaceholder =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s";
   const [thumbnail, setthumbnail] = useState();
@@ -26,18 +30,16 @@ export default function Addnewpost({ navigation }) {
       .url("Image URL format is wrong")
       .required("Required"),
   });
+  const db = getFirestore(app);
 
-  // const userPostsRef = collection(
-  //   db,
-  //   "users",
-  //   userCredential.user.email,
-  //   "posts"
-  // );
-  // // Add a post document to the "posts" collection
-  // await addDoc(userPostsRef, {
-  //   caption: "caption",
-  //   imageUrl: "imageUrl",
-  // });
+  async function addnewpost(useremail, values) {
+    const userPostsRef = collection(db, "users", useremail, "posts");
+    // Add a post document to the "posts" collection
+    await addDoc(userPostsRef, {
+      caption: values.caption,
+      imageUrl: values.imageurl,
+    });
+  }
 
   return (
     <>
@@ -56,7 +58,10 @@ export default function Addnewpost({ navigation }) {
             imageurl: "",
           }}
           validationSchema={Addpostschema}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={(values) => {
+            addnewpost(useremail, values);
+            navigation.goBack();
+          }}
         >
           {({
             handleChange,
