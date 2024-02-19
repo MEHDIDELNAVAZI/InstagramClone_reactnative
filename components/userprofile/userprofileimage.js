@@ -1,10 +1,40 @@
-import { StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
 import Header from "../userprofile/Header";
 import { AntDesign } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Entypo } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
+import Posts from "./Posts";
+import Video from "./Video";
+import Contact from "./Contact";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+import app from "../../firebase";
+import { getAuth } from "firebase/auth";
 
 function Userprofileimage() {
+  const [activetab, setactivetab] = useState("Post");
+  const [posts, setposts] = useState([]);
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+  const db = getFirestore(app);
+  async function getpostdata() {
+    const querySnapshot = await getDocs(
+      collection(db, "users", user.email, "posts")
+    );
+    setposts(querySnapshot);
+  }
+  useEffect(() => {
+    getpostdata();
+  }, []);
   return (
     <>
       <View
@@ -126,49 +156,25 @@ function Userprofileimage() {
           </View>
         </View>
       </View>
-      <View style={styles.mainContainer}>
-        <View style={styles.childView}>
-          <Text
-            style={{
-              color: "white",
-            }}
-          >
-            shbhdcsd
-          </Text>
-        </View>
-        <View style={styles.childView}>
-          <Text
-            style={{
-              color: "white",
-            }}
-          >
-            shbhdcsd
-          </Text>
-        </View>
-        <View style={styles.childView}>
-          <Text
-            style={{
-              color: "white",
-            }}
-          >
-            shbhdcsd
-          </Text>
-        </View>
-      </View>
 
       <View
         style={{
           flexDirection: "row",
-          flex: 1, // Ensures main container takes up the available space
+          justifyContent: "space-evenly",
+          gap: 10,
+          marginTop: 20,
         }}
       >
         <TouchableOpacity
           style={{
-            padding: 10,
+            height: 40,
             alignContent: "center",
             borderRadius: 5,
             backgroundColor: "gray",
-            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            width: Dimensions.get("window").width * 0.4,
+            alignSelf: "flex-start",
           }}
         >
           <Text
@@ -181,16 +187,18 @@ function Userprofileimage() {
         </TouchableOpacity>
         <TouchableOpacity
           style={{
-            padding: 10,
-            alignContent: "center",
+            height: 40,
+            alignItems: "center",
             borderRadius: 5,
             backgroundColor: "gray",
-            flex: 1,
+            justifyContent: "center",
+            width: Dimensions.get("window").width * 0.4,
           }}
         >
           <Text
             style={{
               color: "white",
+              alignContent: "center",
             }}
           >
             Share profile
@@ -198,28 +206,82 @@ function Userprofileimage() {
         </TouchableOpacity>
         <TouchableOpacity
           style={{
+            height: 40,
+            alignContent: "center",
+            borderRadius: 5,
             backgroundColor: "gray",
-            padding: 10,
+            justifyContent: "center",
+            alignItems: "center",
+            width: Dimensions.get("window").width * 0.1,
           }}
         >
           <AntDesign name="adduser" size={24} color="white" />
         </TouchableOpacity>
       </View>
+
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 5,
+          marginTop: 40,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            setactivetab("Post");
+          }}
+          style={[
+            {
+              width: Dimensions.get("window").width / 3,
+              padding: 5,
+              alignItems: "center",
+            },
+            activetab === "Post" && styles.active,
+          ]}
+        >
+          <AntDesign name="table" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setactivetab("Video");
+          }}
+          style={[
+            {
+              width: Dimensions.get("window").width / 3,
+              padding: 5,
+              alignItems: "center",
+            },
+            activetab === "Video" && styles.active,
+          ]}
+        >
+          <Entypo name="folder-video" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setactivetab("Contact");
+          }}
+          style={[
+            {
+              width: Dimensions.get("window").width / 3,
+              padding: 5,
+              alignItems: "center",
+            },
+            activetab === "Contact" && styles.active,
+          ]}
+        >
+          <FontAwesome6 name="contact-book" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+      {activetab === "Post" && <Posts posts={posts} />}
+      {activetab === "Video" && <Video />}
+      {activetab === "Contact" && <Contact />}
     </>
   );
 }
-export default Userprofileimage;
-
 const styles = StyleSheet.create({
-  mainContainer: {
-    flexDirection: "row",
-    alignItems: "stretch", // Ensures child views stretch to fill the entire width
-    justifyContent: "space-between", // Adjust as per your layout requirements
-    flex: 1, // Ensures main container takes up the available space
-  },
-  childView: {
-    flex: 1, // Each child view takes up equal space
-    backgroundColor: "lightgray", // Just for visualization
-    margin: 5, // Optional: Add margin between child views
+  active: {
+    borderBottomColor: "white",
+    borderWidth: 2,
   },
 });
+export default Userprofileimage;
