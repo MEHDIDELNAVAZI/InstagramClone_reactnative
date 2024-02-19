@@ -1,38 +1,49 @@
 import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { tuple } from "yup";
 
 export default function Posts({ posts }) {
   const [data, setData] = useState([]);
   useEffect(() => {
     if (posts) {
       const postData = [];
-      posts.forEach((doc) => {
-        postData.push(doc.data());
+      posts.forEach((doc, index) => {
+        postData.push({
+          id: index,
+          data: doc.data(), // Assuming doc.data() represents the data of the post
+        });
       });
       setData(postData);
     }
   }, [posts]);
+
+  function renderposts({ item }) {
+    return (
+      <Image
+        source={{ uri: item.data.imageUrl }}
+        style={[
+          styles.image,
+          { width: Dimensions.get("window").width / 2 - 20 }, // Adjusted width for two columns
+        ]}
+      />
+    );
+  }
+
   return (
-    <ScrollView
+    <FlatList
+      data={data}
+      renderItem={renderposts}
+      keyExtractor={(item, index) => String(index)}
       style={{
-        marginTop: 10,
         height: 400,
+        marginTop: 20,
       }}
-    >
-      {data.map((item, index) => (
-        <Image
-          source={{ uri: item.imageUrl }}
-          style={[
-            styles.image,
-            { width: Dimensions.get("window").width / 2 - 20 },
-          ]}
-        />
-      ))}
-    </ScrollView>
+      numColumns={2}
+      columnWrapperStyle={{ justifyContent: "space-evenly" }}
+    />
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
@@ -48,5 +59,6 @@ const styles = StyleSheet.create({
   image: {
     height: 150, // Adjust as needed
     marginBottom: 5,
+    marginTop: 10,
   },
 });

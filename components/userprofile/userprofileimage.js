@@ -27,10 +27,14 @@ function Userprofileimage() {
   const user = auth.currentUser;
   const db = getFirestore(app);
   async function getpostdata() {
-    const querySnapshot = await getDocs(
-      collection(db, "users", user.email, "posts")
-    );
-    setposts(querySnapshot);
+    try {
+      const querySnapshot = await getDocs(
+        collection(db, "users", user.email, "posts")
+      );
+      setposts(querySnapshot);
+    } catch (error) {
+      console.log(error);
+    }
   }
   useEffect(() => {
     getpostdata();

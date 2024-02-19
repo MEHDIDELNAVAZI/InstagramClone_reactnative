@@ -12,10 +12,9 @@ import {
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInput } from "react-native-gesture-handler";
-import app from "../firebase";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { auth, db } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 function Signup({ navigation }) {
   const Signupschema = Yup.object().shape({
@@ -30,9 +29,6 @@ function Signup({ navigation }) {
       .matches(/\d+/, "One number"),
   });
   const [loading, setLoading] = useState(false);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
   const getrandomimageprofile = async () => {
     const res = await fetch("https://randomuser.me/api");
     const data = await res.json();

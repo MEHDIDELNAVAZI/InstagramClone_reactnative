@@ -11,7 +11,7 @@ import {
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInput } from "react-native-gesture-handler";
-import app from "../firebase";
+import {auth} from "../firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Loginscreen({ navigation }) {
@@ -20,7 +20,7 @@ export default function Loginscreen({ navigation }) {
     password: Yup.string().required("Required"),
   });
   const [loading, setLoading] = useState(false);
-  const auth = getAuth(app);
+
   const Onlogin = async (email, password) => {
     setLoading(true); // Set loading to true when login process starts
     signInWithEmailAndPassword(auth, email, password)
