@@ -14,18 +14,28 @@ import {
   getDoc,
   getDocs,
   getFirestore,
-  query,
-  where,
 } from "firebase/firestore";
-import app from "../../firebase";
-import { getAuth } from "firebase/auth";
+import { db, auth } from "../../firebase";
 
 function Userprofileimage() {
   const [activetab, setactivetab] = useState("Post");
-  const [posts, setposts] = useState([]);
-  const auth = getAuth(app);
+  const [posts, setposts] = useState(null);
   const user = auth.currentUser;
-  const db = getFirestore(app);
+  const [userdata, setuserdata] = useState(null);
+  async function getUserData() {
+    try {
+      const userref = doc(db, "users", user.email);
+      const docSnap = await getDoc(userref);
+      if (docSnap.exists) {
+        setuserdata(docSnap.data());
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error getting user data:", error);
+    }
+  }
+
   async function getpostdata() {
     try {
       const querySnapshot = await getDocs(
@@ -38,6 +48,7 @@ function Userprofileimage() {
   }
   useEffect(() => {
     getpostdata();
+    getUserData();
   }, []);
   return (
     <>
@@ -51,7 +62,9 @@ function Userprofileimage() {
         <View>
           <Image
             source={{
-              uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s",
+              uri: userdata
+                ? userdata.profileimage
+                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s",
             }}
             style={{
               width: 100,
@@ -60,6 +73,7 @@ function Userprofileimage() {
               position: "relative",
             }}
           />
+
           <View
             style={{
               width: 30,

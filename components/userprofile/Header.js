@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Entypo } from "@expo/vector-icons";
 
-function Header() {
+function Header({ username }) {
   return (
     <View>
       <View
@@ -19,7 +19,7 @@ function Header() {
             color: "white",
           }}
         >
-          user name{" "}
+          {username ? username : <ActivityIndicator color="white" />}
         </Text>
         <View
           style={{

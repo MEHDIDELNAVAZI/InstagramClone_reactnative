@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { getApp, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -11,8 +11,13 @@ const firebaseConfig = {
   appId: "1:416862737995:web:13548419824ababdee1fce",
 };
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Now you can use Firebase services such as authentication, database, etc.
-var auth = getAuth(app);
+var app = initializeApp(firebaseConfig);
+const authProvider = app.container.getProvider("auth-exp");
+let auth;
+if (authProvider.isInitialized()) {
+  auth = authProvider.getImmediate();
+} else {
+  auth = getAuth(app);
+}
 var db = getFirestore(app);
-export { db,auth };
+export { db, auth, app };

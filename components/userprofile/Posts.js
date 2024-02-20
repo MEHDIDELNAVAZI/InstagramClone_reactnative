@@ -1,12 +1,20 @@
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
-import { tuple } from "yup";
 
 export default function Posts({ posts }) {
   const [data, setData] = useState([]);
+  const [loading, setloading] = useState(true);
   useEffect(() => {
     if (posts) {
+      setloading(false);
       const postData = [];
       posts.forEach((doc, index) => {
         postData.push({
@@ -15,33 +23,49 @@ export default function Posts({ posts }) {
         });
       });
       setData(postData);
+    } else {
     }
   }, [posts]);
 
-  function renderposts({ item }) {
+  function renderposts({ item, index }) {
     return (
       <Image
         source={{ uri: item.data.imageUrl }}
         style={[
           styles.image,
-          { width: Dimensions.get("window").width / 2 - 20 }, // Adjusted width for two columns
+          { width: Dimensions.get("window").width / 2 },
+          // Adjusted width for two columns
         ]}
       />
     );
   }
-
   return (
-    <FlatList
-      data={data}
-      renderItem={renderposts}
-      keyExtractor={(item, index) => String(index)}
-      style={{
-        height: 400,
-        marginTop: 20,
-      }}
-      numColumns={2}
-      columnWrapperStyle={{ justifyContent: "space-evenly" }}
-    />
+    <>
+      {loading ? (
+        <ActivityIndicator
+          color="white"
+          style={{
+            marginTop: 100,
+          }}
+        />
+      ) : (
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <FlatList
+            data={data}
+            renderItem={renderposts}
+            keyExtractor={(item, index) => String(index)}
+            style={{
+              height: 400,
+            }}
+            numColumns={2}
+          />
+        </View>
+      )}
+    </>
   );
 }
 const styles = StyleSheet.create({
@@ -49,7 +73,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
     marginTop: 10,
   },
   item: {

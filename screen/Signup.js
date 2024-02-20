@@ -32,9 +32,8 @@ function Signup({ navigation }) {
   const getrandomimageprofile = async () => {
     const res = await fetch("https://randomuser.me/api");
     const data = await res.json();
-    return JSON.stringify(data.results[0].picture.large);
+    return data.results[0].picture.large;
   };
-
   const onSignup = async (email, password, username) => {
     setLoading(true); // Set loading to true when signup process starts
     try {

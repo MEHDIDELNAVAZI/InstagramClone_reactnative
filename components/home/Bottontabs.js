@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
@@ -13,28 +14,29 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { getFirestore } from "firebase/firestore";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import app from "../../firebase";
-import { getAuth } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db, auth } from "../../firebase";
 
 function Bottontabs({ setselectedtab, selectedtab, navigation, useremail }) {
-  const [userprofileimage, setuserprofileimage] = useState(null);
-  const db = getFirestore(app);
-
-  // async function getUserProfileImage(emailUser) {
-  //   const q = query(collection(db, "users"), where("email", "==", emailUser));
-  //   const querySnapshot = await getDocs(q);
-  //   if (!querySnapshot.empty) {
-  //     querySnapshot.forEach((doc) => {
-  //       const userData = doc.data();
-  //       const userProfileImage = userData.profileimage;
-  //       setuserprofileimage(userProfileImage);
-  //     });
-  //   } else {
-  //     console.log("No matching documents.");
-  //   }
-  // }
+  const user = auth.currentUser;
+  const [userdata, setuserdata] = useState(null);
+  async function getUserData() {
+    try {
+      const userref = doc(db, "users", user.email);
+      const docSnap = await getDoc(userref);
+      if (docSnap.exists) {
+        setuserdata(docSnap.data());
+        console.log(docSnap.data().profileimage);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error getting user data:", error);
+    }
+  }
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   return (
     <>
@@ -90,7 +92,7 @@ function Bottontabs({ setselectedtab, selectedtab, navigation, useremail }) {
             setselectedtab("Profile");
           }}
         >
-          {userprofileimage ? (
+          {userdata ? (
             <Image
               style={
                 selectedtab === "Profile"
@@ -98,17 +100,11 @@ function Bottontabs({ setselectedtab, selectedtab, navigation, useremail }) {
                   : styles.profileimage
               }
               source={{
-                uri: { userprofileimage },
+                uri: userdata.profileimage,
               }}
             />
           ) : (
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              laoding
-            </Text>
+            <ActivityIndicator color="white" />
           )}
         </TouchableOpacity>
       </SafeAreaView>
