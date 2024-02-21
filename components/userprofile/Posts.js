@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
+import Skeletonloading from "../skeleton";
 
 export default function Posts({ posts }) {
   const [data, setData] = useState([]);
@@ -42,12 +43,7 @@ export default function Posts({ posts }) {
   return (
     <>
       {loading ? (
-        <ActivityIndicator
-          color="white"
-          style={{
-            marginTop: 100,
-          }}
-        />
+        <Skeletonloading />
       ) : (
         <View
           style={{

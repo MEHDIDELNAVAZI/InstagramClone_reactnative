@@ -13,11 +13,65 @@ import Header from "../components/addnewpost/Header";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
-import app from "../firebase";
+import app, { storage } from "../firebase";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
+import * as ImagePicker from "expo-image-picker";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "@firebase/storage";
 
 export default function Addnewpost({ navigation, route }) {
   const { useremail } = route.params;
+  const [image, setImage] = useState(null);
+
+  async function uplouddata(uri, typeoffile) {
+    if (typeoffile === "image") {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storageRef = ref(storage, "/images" + new Date().getTime());
+      /// uniq name for the image name
+      const uploudeprocess = uploadBytesResumable(storageRef, blob);
+      uploudeprocess.on(
+        "state_changed",
+        (snapshout) => {
+          const proggresspersentage = Math.round(
+            (snapshout.bytesTransferred / snapshout.totalBytes) * 100
+          );
+          console.log(proggresspersentage);
+        },
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          console.log("uploding completed ");
+          getDownloadURL(uploudeprocess.snapshot.ref).then(
+            async (downlodeurl) => {
+              return downlodeurl;
+            }
+          );
+        }
+      );
+    } else {
+      //  handle video uplouding to fire base
+    }
+  }
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.image,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const response = result.assets[0].uri;
+      setImage(response);
+    }
+  };
 
   const imageplaceholder =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s";
@@ -26,24 +80,29 @@ export default function Addnewpost({ navigation, route }) {
     caption: Yup.string()
       .min(2, "Too Short caption !")
       .max(50, "Too Long caption !"),
-    imageurl: Yup.string()
-      .url("Image URL format is wrong")
-      .required("Required"),
   });
   const db = getFirestore(app);
 
   async function addnewpost(useremail, values) {
+    const imageurl = await uplouddata(image, "image");
     const userPostsRef = collection(db, "users", useremail, "posts");
     // Add a post document to the "posts" collection
     await addDoc(userPostsRef, {
       caption: values.caption,
-      imageUrl: values.imageurl,
+      imageUrl: imageurl,
     });
   }
 
   return (
     <>
       <StatusBar style="light" />
+
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Button title="Pick an image from camera roll" onPress={pickImage} />
+        {image && (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        )}
+      </View>
       <SafeAreaView
         style={{
           flex: 1,
@@ -55,7 +114,6 @@ export default function Addnewpost({ navigation, route }) {
         <Formik
           initialValues={{
             caption: "",
-            imageurl: "",
           }}
           validationSchema={Addpostschema}
           onSubmit={(values) => {
@@ -107,7 +165,7 @@ export default function Addnewpost({ navigation, route }) {
                 </View>
                 <Image
                   source={{
-                    uri: values.imageurl ? values.imageurl : imageplaceholder,
+                    uri: image ? image : imageplaceholder,
                   }}
                   style={{
                     width: 100,
@@ -117,39 +175,6 @@ export default function Addnewpost({ navigation, route }) {
               </View>
               <Divider width={1} style={{}} />
 
-              <View
-                style={{
-                  flexDirection: "column",
-                  flex: 1,
-                }}
-              >
-                <TextInput
-                  onChangeText={handleChange("imageurl")}
-                  onBlur={handleBlur("imageurl")}
-                  value={values.imageurl}
-                  placeholder="Enter image url"
-                  onChange={(e) => {
-                    setthumbnail(e.target.value);
-                  }}
-                  style={[
-                    styles.inputtext,
-                    {
-                      marginTop: 10,
-                      borderWidth: 1,
-                      borderColor: "gray",
-                      height: 40,
-                      borderRadius: 1,
-                      padding: 5,
-                    },
-                  ]}
-                  placeholderTextColor={"gray"}
-                />
-                {touched.imageurl && errors.imageurl && (
-                  <Text style={[styles.error, { marginLeft: 10 }]}>
-                    {errors.imageurl}
-                  </Text>
-                )}
-              </View>
               <Button onPress={handleSubmit} title="Share" />
             </>
           )}
