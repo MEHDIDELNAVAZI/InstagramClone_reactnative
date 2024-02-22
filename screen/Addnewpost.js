@@ -12,7 +12,7 @@ import {
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import Header from "../components/addnewpost/Header";
-import {Formik } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
 import app, { storage } from "../firebase";
@@ -27,9 +27,11 @@ export default function Addnewpost({ navigation, route }) {
   const { useremail } = route.params;
   const [image, setImage] = useState(null);
   const { updateProgress } = useProgress();
-  
+  const { updateProgressisactive } = useProgress();
+
   async function uplouddata(uri, typeoffile) {
     if (typeoffile === "image") {
+      updateProgressisactive(true);
       const response = await fetch(uri);
       const blob = await response.blob();
       const storageRef = ref(storage, "/images" + new Date().getTime());
@@ -50,6 +52,7 @@ export default function Addnewpost({ navigation, route }) {
           },
           async () => {
             console.log("uploading completed ");
+            updateProgressisactive(false);
             try {
               const downloadURL = await getDownloadURL(
                 uploudeprocess.snapshot.ref
@@ -73,7 +76,7 @@ export default function Addnewpost({ navigation, route }) {
       mediaTypes: ImagePicker.image,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.2,
     });
 
     if (!result.canceled) {

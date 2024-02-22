@@ -11,11 +11,12 @@ import Userprofile from "./Userprofile";
 import Reels from "./Reels";
 import Explor from "./Explor";
 import { useProgress } from "../context/ProgressContext";
+import ProgressBar from "../components/home/ProgressBar";
 
 function Home({ navigation }) {
   const [useremail, setemailuser] = useState();
   const [selectedtab, setselectedtab] = useState("Home");
-  const { progress } = useProgress();
+  const { progress, progressisactive } = useProgress();
   useEffect(() => {
     const auth = getAuth(app);
     const user = auth.currentUser;
@@ -37,14 +38,7 @@ function Home({ navigation }) {
           <>
             <Header navigation={navigation} useremail={useremail} />
             <Stories />
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              {progress}
-            </Text>
-
+            {progressisactive && <ProgressBar progress={progress} />}
             <Posts />
           </>
         )}
