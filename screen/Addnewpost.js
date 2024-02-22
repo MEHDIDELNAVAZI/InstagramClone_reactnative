@@ -6,27 +6,28 @@ import {
   SafeAreaView,
   Image,
   Button,
+  TouchableOpacity,
 } from "react-native";
+
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import Header from "../components/addnewpost/Header";
-import { Form, Formik } from "formik";
+import {Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
 import app, { storage } from "../firebase";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-} from "@firebase/storage";
+import { Entypo } from "@expo/vector-icons";
+import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
+import { useProgress } from "../context/ProgressContext";
 
 export default function Addnewpost({ navigation, route }) {
   const { useremail } = route.params;
   const [image, setImage] = useState(null);
-
+  const { updateProgress } = useProgress();
+  
   async function uplouddata(uri, typeoffile) {
     if (typeoffile === "image") {
       const response = await fetch(uri);
@@ -34,26 +35,34 @@ export default function Addnewpost({ navigation, route }) {
       const storageRef = ref(storage, "/images" + new Date().getTime());
       /// uniq name for the image name
       const uploudeprocess = uploadBytesResumable(storageRef, blob);
-      uploudeprocess.on(
-        "state_changed",
-        (snapshout) => {
-          const proggresspersentage = Math.round(
-            (snapshout.bytesTransferred / snapshout.totalBytes) * 100
-          );
-          console.log(proggresspersentage);
-        },
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          console.log("uploding completed ");
-          getDownloadURL(uploudeprocess.snapshot.ref).then(
-            async (downlodeurl) => {
-              return downlodeurl;
+      return new Promise((resolve, reject) => {
+        uploudeprocess.on(
+          "state_changed",
+          (snapshot) => {
+            const progressPercentage = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            updateProgress(progressPercentage);
+          },
+          (error) => {
+            console.log(error);
+            reject(error);
+          },
+          async () => {
+            console.log("uploading completed ");
+            try {
+              const downloadURL = await getDownloadURL(
+                uploudeprocess.snapshot.ref
+              );
+              console.log("Download URL:", downloadURL);
+              resolve(downloadURL);
+            } catch (error) {
+              console.log("Error getting download URL:", error);
+              reject(error);
             }
-          );
-        }
-      );
+          }
+        );
+      });
     } else {
       //  handle video uplouding to fire base
     }
@@ -82,7 +91,6 @@ export default function Addnewpost({ navigation, route }) {
       .max(50, "Too Long caption !"),
   });
   const db = getFirestore(app);
-
   async function addnewpost(useremail, values) {
     const imageurl = await uplouddata(image, "image");
     const userPostsRef = collection(db, "users", useremail, "posts");
@@ -97,12 +105,6 @@ export default function Addnewpost({ navigation, route }) {
     <>
       <StatusBar style="light" />
 
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Button title="Pick an image from camera roll" onPress={pickImage} />
-        {image && (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        )}
-      </View>
       <SafeAreaView
         style={{
           flex: 1,
@@ -179,6 +181,23 @@ export default function Addnewpost({ navigation, route }) {
             </>
           )}
         </Formik>
+        <View
+          style={{
+            position: "absolute",
+            bottom: 100,
+            right: 10,
+            padding: 4,
+            flexDirection: "column",
+            gap: 20,
+          }}
+        >
+          <TouchableOpacity onPress={pickImage}>
+            <AntDesign name="camera" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Entypo name="video-camera" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </>
   );

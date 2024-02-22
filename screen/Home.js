@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, SafeAreaView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Header from "../components/home/Header";
 import Stories from "../components/home/Stories";
@@ -10,10 +10,12 @@ import { getAuth } from "firebase/auth";
 import Userprofile from "./Userprofile";
 import Reels from "./Reels";
 import Explor from "./Explor";
+import { useProgress } from "../context/ProgressContext";
 
 function Home({ navigation }) {
   const [useremail, setemailuser] = useState();
   const [selectedtab, setselectedtab] = useState("Home");
+  const { progress } = useProgress();
   useEffect(() => {
     const auth = getAuth(app);
     const user = auth.currentUser;
@@ -35,6 +37,14 @@ function Home({ navigation }) {
           <>
             <Header navigation={navigation} useremail={useremail} />
             <Stories />
+            <Text
+              style={{
+                color: "white",
+              }}
+            >
+              {progress}
+            </Text>
+
             <Posts />
           </>
         )}

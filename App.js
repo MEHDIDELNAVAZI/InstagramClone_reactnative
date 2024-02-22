@@ -1,4 +1,9 @@
 import Authuser from "./Authuser";
+import { ProgressProvider } from "./context/ProgressContext";
 export default function App() {
-  return <Authuser />;
+  return (
+    <ProgressProvider>
+      <Authuser />
+    </ProgressProvider>
+  );
 }
