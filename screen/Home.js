@@ -12,6 +12,7 @@ import Reels from "./Reels";
 import Explor from "./Explor";
 import { useProgress } from "../context/ProgressContext";
 import ProgressBar from "../components/home/ProgressBar";
+import Commentslider from "../components/Commentsection";
 
 function Home({ navigation }) {
   const [useremail, setemailuser] = useState();
@@ -34,6 +35,7 @@ function Home({ navigation }) {
           backgroundColor: "black",
         }}
       >
+        <Commentslider />
         {selectedtab === "Home" && (
           <>
             <Header navigation={navigation} useremail={useremail} />

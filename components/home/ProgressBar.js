@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
 
 export default function ProgressBar({ progress }) {
   return (
@@ -11,20 +11,20 @@ export default function ProgressBar({ progress }) {
 }
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
     borderRadius: 5,
     height: 8, // Adjusted height
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBar: {
-    height: '100%',
-    backgroundColor: '#007AFF',
+    height: "100%",
+    backgroundColor: "#007AFF",
   },
   progressText: {
     marginLeft: 5,
-    color: '#333',
+    color: "#333",
     fontSize: 10, // Adjusted font size
   },
 });

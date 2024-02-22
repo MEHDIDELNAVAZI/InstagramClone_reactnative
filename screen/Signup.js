@@ -20,13 +20,7 @@ function Signup({ navigation }) {
   const Signupschema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
     username: Yup.string().required("Required"),
-    password: Yup.string()
-      .required("Required")
-      .min(8, "Must be 8 characters or more")
-      .matches(/[a-z]+/, "One lowercase character")
-      .matches(/[A-Z]+/, "One uppercase character")
-      .matches(/[@$!%*#?&]+/, "One special character")
-      .matches(/\d+/, "One number"),
+    password: Yup.string().required("Required"),
   });
   const [loading, setLoading] = useState(false);
   const getrandomimageprofile = async () => {

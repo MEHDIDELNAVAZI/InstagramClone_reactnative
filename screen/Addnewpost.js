@@ -78,13 +78,11 @@ export default function Addnewpost({ navigation, route }) {
       aspect: [4, 3],
       quality: 0.2,
     });
-
     if (!result.canceled) {
       const response = result.assets[0].uri;
       setImage(response);
     }
   };
-
   const imageplaceholder =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s";
   const [thumbnail, setthumbnail] = useState();
@@ -122,8 +120,11 @@ export default function Addnewpost({ navigation, route }) {
           }}
           validationSchema={Addpostschema}
           onSubmit={(values) => {
-            addnewpost(useremail, values);
-            navigation.goBack();
+            if (image) {
+              addnewpost(useremail, values);
+              navigation.goBack();
+            } else {
+            }
           }}
         >
           {({
@@ -178,9 +179,34 @@ export default function Addnewpost({ navigation, route }) {
                   }}
                 />
               </View>
-              <Divider width={1} style={{}} />
-
-              <Button onPress={handleSubmit} title="Share" />
+              <Divider width={2} style={{}} />
+              <View
+                style={{
+                  alignItems: "center",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={handleSubmit}
+                  style={{
+                    alignItems: "center",
+                    width: "100%",
+                    backgroundColor: "blue",
+                    height: 40,
+                    borderRadius: 5,
+                    justifyContent: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Share
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </>
           )}
         </Formik>
