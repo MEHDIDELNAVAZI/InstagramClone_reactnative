@@ -23,6 +23,7 @@ function Header({ navigation }) {
         style={{
           color: "white",
           fontWeight: "bold",
+          fontSize: 20,
         }}
       >
         ADDPOST
@@ -36,7 +37,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "space-between",
     flexDirection: "row",
-    alignItems: "center",
     alignItems: "center",
   },
 });

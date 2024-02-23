@@ -4,7 +4,7 @@ import {
   View,
   Image,
   Dimensions,
-  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
@@ -14,6 +14,7 @@ export default function Posts({ posts }) {
   const [data, setData] = useState([]);
   const [loading, setloading] = useState(true);
   useEffect(() => {
+    console.log("hey useeffect called");
     if (posts) {
       setloading(false);
       const postData = [];
@@ -28,38 +29,31 @@ export default function Posts({ posts }) {
     }
   }, [posts]);
 
-  function renderposts({ item, index }) {
-    return (
-      <Image
-        source={{ uri: item.data.imageUrl }}
-        style={[
-          styles.image,
-          { width: Dimensions.get("window").width / 2 },
-          // Adjusted width for two columns
-        ]}
-      />
-    );
-  }
   return (
     <>
       {loading ? (
         <Skeletonloading />
       ) : (
-        <View
-          style={{
-            alignItems: "center",
-          }}
-        >
-          <FlatList
-            data={data}
-            renderItem={renderposts}
-            keyExtractor={(item, index) => String(index)}
-            style={{
-              height: 400,
-            }}
-            numColumns={2}
-          />
-        </View>
+        <>
+          {data.map((item, indexed) => {
+            return (
+              <View
+                style={{
+                  marginLeft: 2,
+                }}
+              >
+                <Image
+                  source={{ uri: item.data.imageUrl }}
+                  style={[
+                    styles.image,
+                    { width: Dimensions.get("window").width / 3 - 1 },
+                    // Adjusted width for two columns
+                  ]}
+                />
+              </View>
+            );
+          })}
+        </>
       )}
     </>
   );
@@ -76,8 +70,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    height: 150, // Adjust as needed
-    marginBottom: 5,
-    marginTop: 10,
+    height: 100, // Adjust as needed
+    marginBottom: 2,
   },
 });

@@ -1,8 +1,14 @@
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import Header from "../userprofile/Header";
 import { AntDesign } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { RefreshControl, TouchableOpacity } from "react-native-gesture-handler";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
 import Posts from "./Posts";
@@ -20,6 +26,7 @@ import { db, auth } from "../../firebase";
 function Userprofileimage() {
   const [activetab, setactivetab] = useState("Post");
   const [posts, setposts] = useState(null);
+  const [Errrs, setErrors] = useState({});
   const user = auth.currentUser;
   const [userdata, setuserdata] = useState(null);
   async function getUserData() {
@@ -35,78 +42,174 @@ function Userprofileimage() {
       console.error("Error getting user data:", error);
     }
   }
-
   async function getpostdata() {
     try {
       const querySnapshot = await getDocs(
         collection(db, "users", user.email, "posts")
       );
       setposts(querySnapshot);
+      setRefreshing(false);
     } catch (error) {
-      console.log(error);
+      setErrors("Somthing went wrong to get images!");
     }
   }
   useEffect(() => {
     getpostdata();
     getUserData();
   }, []);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getpostdata();
+  }, []);
   return (
     <>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          padding: 10,
-        }}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <View>
-          <Image
-            source={{
-              uri: userdata
-                ? userdata.profileimage
-                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s",
-            }}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              position: "relative",
-            }}
-          />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            padding: 10,
+          }}
+        >
+          <View>
+            <Image
+              source={{
+                uri: userdata
+                  ? userdata.profileimage
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s",
+              }}
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                position: "relative",
+              }}
+            />
+            <View
+              style={{
+                width: 30,
+                height: 30,
+                backgroundColor: "blue",
+                justifyContent: "center",
+                position: "absolute",
+                alignItems: "center",
+                bottom: 5,
+                right: 0,
+                borderRadius: 15,
+                borderWidth: 4,
+                borderColor: "black",
+              }}
+            >
+              <TouchableOpacity>
+                <AntDesign name="plus" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+          </View>
 
           <View
             style={{
-              width: 30,
-              height: 30,
-              backgroundColor: "blue",
-              justifyContent: "center",
-              position: "absolute",
-              alignItems: "center",
-              bottom: 5,
-              right: 0,
-              borderRadius: 15,
-              borderWidth: 4,
-              borderColor: "black",
+              flexDirection: "row",
+              gap: 20,
             }}
           >
-            <TouchableOpacity>
-              <AntDesign name="plus" size={24} color="white" />
-            </TouchableOpacity>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                }}
+              >
+                23
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                }}
+              >
+                Posts
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                }}
+              >
+                23
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                }}
+              >
+                Following
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                }}
+              >
+                23
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                }}
+              >
+                Followers
+              </Text>
+            </View>
           </View>
         </View>
 
         <View
           style={{
             flexDirection: "row",
-            gap: 20,
+            justifyContent: "space-evenly",
+            gap: 10,
+            marginTop: 20,
           }}
         >
-          <View
+          <TouchableOpacity
             style={{
-              flexDirection: "column",
-              justifyContent: "center",
+              height: 40,
               alignContent: "center",
+              borderRadius: 5,
+              backgroundColor: "gray",
+              justifyContent: "center",
               alignItems: "center",
+              width: Dimensions.get("window").width * 0.4,
+              alignSelf: "flex-start",
             }}
           >
             <Text
@@ -114,185 +217,100 @@ function Userprofileimage() {
                 color: "white",
               }}
             >
-              23
+              Edit profile
             </Text>
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              Posts
-            </Text>
-          </View>
-
-          <View
+          </TouchableOpacity>
+          <TouchableOpacity
             style={{
-              flexDirection: "column",
-              justifyContent: "center",
-              alignContent: "center",
+              height: 40,
               alignItems: "center",
+              borderRadius: 5,
+              backgroundColor: "gray",
+              justifyContent: "center",
+              width: Dimensions.get("window").width * 0.4,
             }}
           >
             <Text
               style={{
                 color: "white",
+                alignContent: "center",
               }}
             >
-              23
+              Share profile
             </Text>
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              Following
-            </Text>
-          </View>
-
-          <View
+          </TouchableOpacity>
+          <TouchableOpacity
             style={{
-              flexDirection: "column",
-              justifyContent: "center",
+              height: 40,
               alignContent: "center",
+              borderRadius: 5,
+              backgroundColor: "gray",
+              justifyContent: "center",
               alignItems: "center",
+              width: Dimensions.get("window").width * 0.1,
             }}
           >
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              23
-            </Text>
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              Followers
-            </Text>
-          </View>
+            <AntDesign name="adduser" size={24} color="white" />
+          </TouchableOpacity>
         </View>
-      </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          gap: 10,
-          marginTop: 20,
-        }}
-      >
-        <TouchableOpacity
+        <View
           style={{
-            height: 40,
-            alignContent: "center",
-            borderRadius: 5,
-            backgroundColor: "gray",
-            justifyContent: "center",
-            alignItems: "center",
-            width: Dimensions.get("window").width * 0.4,
-            alignSelf: "flex-start",
+            flexDirection: "row",
+            gap: 5,
+            marginTop: 40,
           }}
         >
-          <Text
-            style={{
-              color: "white",
+          <TouchableOpacity
+            onPress={() => {
+              setactivetab("Post");
             }}
+            style={[
+              {
+                width: Dimensions.get("window").width / 3,
+                padding: 5,
+                alignItems: "center",
+              },
+              activetab === "Post" && styles.active,
+            ]}
           >
-            Edit profile
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: 40,
-            alignItems: "center",
-            borderRadius: 5,
-            backgroundColor: "gray",
-            justifyContent: "center",
-            width: Dimensions.get("window").width * 0.4,
-          }}
-        >
-          <Text
-            style={{
-              color: "white",
-              alignContent: "center",
+            <AntDesign name="table" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setactivetab("Video");
             }}
+            style={[
+              {
+                width: Dimensions.get("window").width / 3,
+                padding: 5,
+                alignItems: "center",
+              },
+              activetab === "Video" && styles.active,
+            ]}
           >
-            Share profile
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: 40,
-            alignContent: "center",
-            borderRadius: 5,
-            backgroundColor: "gray",
-            justifyContent: "center",
-            alignItems: "center",
-            width: Dimensions.get("window").width * 0.1,
-          }}
-        >
-          <AntDesign name="adduser" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 5,
-          marginTop: 40,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            setactivetab("Post");
-          }}
-          style={[
-            {
-              width: Dimensions.get("window").width / 3,
-              padding: 5,
-              alignItems: "center",
-            },
-            activetab === "Post" && styles.active,
-          ]}
-        >
-          <AntDesign name="table" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setactivetab("Video");
-          }}
-          style={[
-            {
-              width: Dimensions.get("window").width / 3,
-              padding: 5,
-              alignItems: "center",
-            },
-            activetab === "Video" && styles.active,
-          ]}
-        >
-          <Entypo name="folder-video" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setactivetab("Contact");
-          }}
-          style={[
-            {
-              width: Dimensions.get("window").width / 3,
-              padding: 5,
-              alignItems: "center",
-            },
-            activetab === "Contact" && styles.active,
-          ]}
-        >
-          <FontAwesome6 name="contact-book" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-      {activetab === "Post" && <Posts posts={posts} />}
-      {activetab === "Video" && <Video />}
-      {activetab === "Contact" && <Contact />}
+            <Entypo name="folder-video" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setactivetab("Contact");
+            }}
+            style={[
+              {
+                width: Dimensions.get("window").width / 3,
+                padding: 5,
+                alignItems: "center",
+              },
+              activetab === "Contact" && styles.active,
+            ]}
+          >
+            <FontAwesome6 name="contact-book" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+        {activetab === "Post" && <Posts posts={posts} />}
+        {activetab === "Video" && <Video />}
+        {activetab === "Contact" && <Contact />}
+      </ScrollView>
     </>
   );
 }

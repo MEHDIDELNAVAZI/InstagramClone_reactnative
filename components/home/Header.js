@@ -25,7 +25,7 @@ export default function Header({ navigation, useremail }) {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
@@ -79,7 +79,7 @@ export default function Header({ navigation, useremail }) {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 const styles = StyleSheet.create({

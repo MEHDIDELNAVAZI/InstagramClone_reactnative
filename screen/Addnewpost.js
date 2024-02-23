@@ -95,7 +95,6 @@ export default function Addnewpost({ navigation, route }) {
   async function addnewpost(useremail, values) {
     const imageurl = await uplouddata(image, "image");
     const userPostsRef = collection(db, "users", useremail, "posts");
-    // Add a post document to the "posts" collection
     await addDoc(userPostsRef, {
       caption: values.caption,
       imageUrl: imageurl,
@@ -105,7 +104,6 @@ export default function Addnewpost({ navigation, route }) {
   return (
     <>
       <StatusBar style="light" />
-
       <SafeAreaView
         style={{
           flex: 1,
@@ -113,7 +111,6 @@ export default function Addnewpost({ navigation, route }) {
         }}
       >
         <Header navigation={navigation} />
-
         <Formik
           initialValues={{
             caption: "",

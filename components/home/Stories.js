@@ -8,30 +8,36 @@ import {
 } from "react-native";
 import React from "react";
 import stories from "../../assets/data/users";
+import { Divider } from "@rneui/themed";
 
 export default function Stories() {
   const renderdata = (item) => {
     return (
-      <View
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Image source={{ uri: item.image }} style={styles.storyimage} />
-        <Text style={styles.storytxt}>
-          {item.user}
-          {item.username}
-        </Text>
-      </View>
+      <>
+        <View
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Image source={{ uri: item.image }} style={styles.storyimage} />
+          <Text style={styles.storytxt}>
+            {item.user}
+            {item.username}
+          </Text>
+        </View>
+      </>
     );
   };
   return (
-    <FlatList
-      horizontal={true}
-      data={stories}
-      renderItem={({ item }) => renderdata(item)} // Pass each item to the renderdata function
-    />
+    <>
+      <FlatList
+        horizontal={true}
+        data={stories}
+        renderItem={({ item }) => renderdata(item)} // Pass each item to the renderdata function
+      />
+      <Divider width={1} color="gray" />
+    </>
   );
 }
 const styles = StyleSheet.create({

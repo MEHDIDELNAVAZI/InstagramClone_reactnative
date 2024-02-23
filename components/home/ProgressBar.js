@@ -5,7 +5,6 @@ export default function ProgressBar({ progress }) {
   return (
     <View style={styles.container}>
       <View style={[styles.progressBar, { width: `${progress}%` }]} />
-      <Text style={styles.progressText}>{`${progress}%`}</Text>
     </View>
   );
 }
@@ -15,7 +14,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f0f0f0",
     borderRadius: 5,
-    height: 8, // Adjusted height
+    height: 4, // Adjusted height
     overflow: "hidden",
   },
   progressBar: {

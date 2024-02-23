@@ -1,10 +1,10 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
-function Header({ username }) {
+const Header = React.memo(({ username }) => {
   return (
     <View>
       <View
@@ -17,6 +17,7 @@ function Header({ username }) {
         <Text
           style={{
             color: "white",
+            fontSize: 20,
           }}
         >
           {username ? username : <ActivityIndicator color="white" />}
@@ -25,19 +26,20 @@ function Header({ username }) {
           style={{
             flexDirection: "row",
             gap: 10,
+            alignItems: "center",
           }}
         >
           <TouchableOpacity>
-            <MaterialIcons name="add-box" size={24} color="white" />
+            <AntDesign name="plussquareo" size={24} color="white" />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Entypo name="menu" size={24} color="white" />
+            <Entypo name="menu" size={30} color="white" />
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
-}
+});
 
 export default Header;
 

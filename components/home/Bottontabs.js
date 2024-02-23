@@ -16,6 +16,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
+import { Divider } from "@rneui/themed";
 
 function Bottontabs({ setselectedtab, selectedtab, navigation, useremail }) {
   const user = auth.currentUser;
@@ -40,90 +41,97 @@ function Bottontabs({ setselectedtab, selectedtab, navigation, useremail }) {
 
   return (
     <>
-      <SafeAreaView style={styles.bottomtabs}>
-        <TouchableOpacity
-          onPress={() => {
-            setselectedtab("Home");
-          }}
-        >
-          <Ionicons
-            name={selectedtab === "Home" ? "home" : "home-outline"}
-            size={24}
-            color="white"
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            setselectedtab("Explorer");
-          }}
-        >
-          {selectedtab === "Search" ? (
-            <Ionicons name="search-circle-sharp" size={35} color="white" />
-          ) : (
-            <Ionicons name="search-circle-outline" size={35} color="white" />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Addnewpost", {
-              useremail: useremail,
-            });
-          }}
-        >
-          <EvilIcons name="plus" size={35} color="white" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            setselectedtab("Reels");
-          }}
-        >
-          {selectedtab === "Reels" ? (
-            <FontAwesome name="video-camera" size={24} color="white" />
-          ) : (
-            <Feather name="video" size={24} color="white" />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            setselectedtab("Profile");
-          }}
-        >
-          {userdata ? (
-            <Image
-              style={
-                selectedtab === "Profile"
-                  ? [styles.profileimage, styles.activeprofileimage]
-                  : styles.profileimage
-              }
-              source={{
-                uri: userdata.profileimage,
-              }}
+      <SafeAreaView
+        style={{
+          flex: 1,
+        }}
+      >
+        <View style={styles.bottomtabs}>
+          <TouchableOpacity
+            onPress={() => {
+              setselectedtab("Home");
+            }}
+          >
+            <Ionicons
+              name={selectedtab === "Home" ? "home" : "home-outline"}
+              size={24}
+              color="white"
             />
-          ) : (
-            <ActivityIndicator color="white" />
-          )}
-        </TouchableOpacity>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setselectedtab("Explorer");
+            }}
+          >
+            {selectedtab === "Search" ? (
+              <Ionicons name="search-circle-sharp" size={35} color="white" />
+            ) : (
+              <Ionicons name="search-circle-outline" size={35} color="white" />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Addnewpost", {
+                useremail: useremail,
+              });
+            }}
+          >
+            <EvilIcons name="plus" size={35} color="white" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setselectedtab("Reels");
+            }}
+          >
+            {selectedtab === "Reels" ? (
+              <FontAwesome name="video-camera" size={24} color="white" />
+            ) : (
+              <Feather name="video" size={24} color="white" />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setselectedtab("Profile");
+            }}
+          >
+            {userdata ? (
+              <Image
+                style={
+                  selectedtab === "Profile"
+                    ? [styles.profileimage, styles.activeprofileimage]
+                    : styles.profileimage
+                }
+                source={{
+                  uri: userdata.profileimage,
+                }}
+              />
+            ) : (
+              <ActivityIndicator color="white" />
+            )}
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </>
   );
 }
 export default Bottontabs;
-
 const styles = StyleSheet.create({
   bottomtabs: {
-    position: "absolute",
     alignItems: "center",
     borderWidth: 1,
-    bottom: 30 ,
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "black",
-    zIndex: 200,
     width: "100%",
+    position: "absolute",
+    bottom: 0,
+    borderTopColor: "gray",
+    borderWidth: 1,
+    backgroundColor: "black",
+    height: 40,
   },
   profileimage: {
     width: 30,

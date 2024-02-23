@@ -16,6 +16,7 @@ import Commentslider from "../components/Commentsection";
 
 function Home({ navigation }) {
   const [useremail, setemailuser] = useState();
+  const [showcommentsection, setshowcommentsection] = useState(false);
   const [selectedtab, setselectedtab] = useState("Home");
   const { progress, progressisactive } = useProgress();
   useEffect(() => {
@@ -33,37 +34,26 @@ function Home({ navigation }) {
         style={{
           flex: 1,
           backgroundColor: "black",
+          borderWidth: 2,
+          borderColor: "black",
         }}
       >
-        <Commentslider />
         {selectedtab === "Home" && (
           <>
             <Header navigation={navigation} useremail={useremail} />
             <Stories />
             {progressisactive && <ProgressBar progress={progress} />}
             <Posts />
+            <Commentslider
+              showcommentsection={showcommentsection}
+              setshowcommentsection={setshowcommentsection}
+            />
           </>
         )}
-        {selectedtab === "Userprofile" && (
-          <>
-            <Userprofile />
-          </>
-        )}
-        {selectedtab === "Reels" && (
-          <>
-            <Reels />
-          </>
-        )}
-        {selectedtab === "Explorer" && (
-          <>
-            <Explor />
-          </>
-        )}
-        {selectedtab === "Profile" && (
-          <>
-            <Userprofile />
-          </>
-        )}
+        {selectedtab === "Userprofile" && <Userprofile />}
+        {selectedtab === "Reels" && <Reels />}
+        {selectedtab === "Explorer" && <Explor />}
+        {selectedtab === "Profile" && <Userprofile />}
         <Bottontabs
           setselectedtab={setselectedtab}
           selectedtab={selectedtab}

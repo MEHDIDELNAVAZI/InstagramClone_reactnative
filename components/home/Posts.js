@@ -21,7 +21,7 @@ function Posts() {
       data={posts}
       renderItem={({ item }) => renderdata(item)}
       style={{
-        marginBottom: 50,
+        marginBottom: 40,
       }}
     />
   );
@@ -30,7 +30,7 @@ function Posts() {
 const styles = StyleSheet.create({
   postimage: {
     width: "100%",
-    height: 500,
+    height: 300,
     marginRight: 5,
   },
 });
