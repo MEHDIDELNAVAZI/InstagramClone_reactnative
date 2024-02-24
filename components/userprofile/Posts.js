@@ -1,59 +1,64 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Image, Dimensions, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native-gesture-handler";
 import Skeletonloading from "../skeleton";
+import { auth, db } from "../../firebase";
+import { getDocs, collection } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default function Posts({ posts }) {
+export default function Posts() {
+  const [posts, setposts] = useState(null);
+  const user = auth.currentUser;
   const [data, setData] = useState([]);
   const [loading, setloading] = useState(true);
-  useEffect(() => {
-    console.log("hey useeffect called");
-    if (posts) {
-      setloading(false);
+  async function getpostdata() {
+    try {
+      const querySnapshot = await getDocs(
+        collection(db, "users", user.email, "posts")
+      );
       const postData = [];
-      posts.forEach((doc, index) => {
+      querySnapshot.forEach((doc, index) => {
         postData.push({
           id: index,
           data: doc.data(), // Assuming doc.data() represents the data of the post
         });
       });
       setData(postData);
-    } else {
+
+      setloading(false);
+    } catch (error) {
+      console.log(error);
     }
-  }, [posts]);
+  }
+  useEffect(() => {
+    getpostdata();
+  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      getpostdata();
+    }, [])
+  );
 
   return (
     <>
       {loading ? (
         <Skeletonloading />
       ) : (
-        <>
-          {data.map((item, indexed) => {
-            return (
-              <View
-                style={{
-                  marginLeft: 2,
-                }}
-              >
-                <Image
-                  source={{ uri: item.data.imageUrl }}
-                  style={[
-                    styles.image,
-                    { width: Dimensions.get("window").width / 3 - 1 },
-                    // Adjusted width for two columns
-                  ]}
-                />
-              </View>
-            );
-          })}
-        </>
+        <FlatList
+          data={data}
+          numColumns={3}
+          renderItem={({ item }) => (
+            <View style={{ marginLeft: 2 }}>
+              <Image
+                source={{ uri: item.data.imageUrl }}
+                style={[
+                  styles.image,
+                  { width: Dimensions.get("window").width / 3 - 1 },
+                ]}
+              />
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
       )}
     </>
   );

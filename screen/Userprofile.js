@@ -1,9 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../components/userprofile/Header";
 import Userprofileimage from "../components/userprofile/userprofileimage";
 import { auth, db } from "../firebase";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+
 
 export default function Userprofile() {
   const user = auth.currentUser;
@@ -26,10 +29,18 @@ export default function Userprofile() {
   }, []);
 
   return (
-    <View>
-      <Header username={userdata && userdata.usernmae} />
-      <Userprofileimage />
-    </View>
+    <ScrollView
+      style={{
+        flex: 1,
+        backgroundColor: "black",
+      }}
+    >
+      <SafeAreaView>
+        <StatusBar style="light"/>
+        <Header username={userdata && userdata.usernmae} />
+        <Userprofileimage />
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({});

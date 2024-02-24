@@ -16,15 +16,7 @@ function Posts() {
       </>
     );
   };
-  return (
-    <FlatList
-      data={posts}
-      renderItem={({ item }) => renderdata(item)}
-      style={{
-        marginBottom: 40,
-      }}
-    />
-  );
+  return <FlatList data={posts} renderItem={({ item }) => renderdata(item)} />;
 }
 
 const styles = StyleSheet.create({

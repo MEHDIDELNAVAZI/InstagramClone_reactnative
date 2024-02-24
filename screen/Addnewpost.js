@@ -15,7 +15,7 @@ import Header from "../components/addnewpost/Header";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
-import app, { storage } from "../firebase";
+import app, { auth, storage } from "../firebase";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -23,8 +23,8 @@ import { Entypo } from "@expo/vector-icons";
 import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
 import { useProgress } from "../context/ProgressContext";
 
-export default function Addnewpost({ navigation, route }) {
-  const { useremail } = route.params;
+export default function Addnewpost({ navigation }) {
+  const useremail = auth.currentUser.email;
   const [image, setImage] = useState(null);
   const { updateProgress } = useProgress();
   const { updateProgressisactive } = useProgress();

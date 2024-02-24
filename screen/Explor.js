@@ -1,9 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import React, { useEffect } from "react";
 
 export default function Explor() {
+  useEffect(() => {
+    console.log("rendered");
+  }, []);
   return (
-    <View>
+    <SafeAreaView
+      style={{
+        backgroundColor: "black",
+        flex: 1,
+      }}
+    >
       <Text
         style={{
           color: "white",
@@ -11,7 +19,7 @@ export default function Explor() {
       >
         Explor
       </Text>
-    </View>
+    </SafeAreaView>
   );
 }
 

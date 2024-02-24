@@ -11,7 +11,7 @@ import { EvilIcons } from "@expo/vector-icons";
 import app from "../../firebase";
 import { getAuth, signOut } from "firebase/auth"; // Import the necessary functions from Firebase Authentication
 
-export default function Header({ navigation, useremail }) {
+export default function Header() {
   const handleSignOut = () => {
     const auth = getAuth(app); // Get the authentication service instance
     signOut(auth)

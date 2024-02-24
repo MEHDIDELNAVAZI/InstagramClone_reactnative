@@ -5,28 +5,20 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
-import { RefreshControl, TouchableOpacity } from "react-native-gesture-handler";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
 import Posts from "./Posts";
 import Video from "./Video";
 import Contact from "./Contact";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 
 function Userprofileimage() {
   const [activetab, setactivetab] = useState("Post");
-  const [posts, setposts] = useState(null);
-  const [Errrs, setErrors] = useState({});
   const user = auth.currentUser;
   const [userdata, setuserdata] = useState(null);
   async function getUserData() {
@@ -42,19 +34,8 @@ function Userprofileimage() {
       console.error("Error getting user data:", error);
     }
   }
-  async function getpostdata() {
-    try {
-      const querySnapshot = await getDocs(
-        collection(db, "users", user.email, "posts")
-      );
-      setposts(querySnapshot);
-      setRefreshing(false);
-    } catch (error) {
-      setErrors("Somthing went wrong to get images!");
-    }
-  }
+
   useEffect(() => {
-    getpostdata();
     getUserData();
   }, []);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -64,12 +45,7 @@ function Userprofileimage() {
   }, []);
   return (
     <>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      <ScrollView>
         <View
           style={{
             flexDirection: "row",
@@ -307,7 +283,7 @@ function Userprofileimage() {
             <FontAwesome6 name="contact-book" size={24} color="white" />
           </TouchableOpacity>
         </View>
-        {activetab === "Post" && <Posts posts={posts} />}
+        {activetab === "Post" && <Posts />}
         {activetab === "Video" && <Video />}
         {activetab === "Contact" && <Contact />}
       </ScrollView>

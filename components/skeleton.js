@@ -1,8 +1,7 @@
 import { useReducer } from "react";
-import { StyleSheet, Pressable, View } from "react-native";
+import { StyleSheet, Pressable, View, FlatList } from "react-native";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
-import { FlatList } from "react-native-gesture-handler";
 
 export default function Skeletonloading() {
   const [dark, toggle] = useReducer((s) => !s, true);

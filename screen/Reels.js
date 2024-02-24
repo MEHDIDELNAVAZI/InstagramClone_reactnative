@@ -1,9 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import React from "react";
 
 export default function Reels() {
   return (
-    <View>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "black",
+      }}
+    >
       <Text
         style={{
           color: "white",
@@ -11,7 +16,7 @@ export default function Reels() {
       >
         Reels
       </Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
