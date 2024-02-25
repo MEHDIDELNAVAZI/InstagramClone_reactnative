@@ -7,7 +7,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
-
 export default function Userprofile() {
   const user = auth.currentUser;
   const [userdata, setuserdata] = useState(null);
@@ -18,29 +17,24 @@ export default function Userprofile() {
       if (docSnap.exists) {
         setuserdata(docSnap.data());
       } else {
-        console.log("No such document!");
       }
-    } catch (error) {
-      console.error("Error getting user data:", error);
-    }
+    } catch (error) {}
   }
   useEffect(() => {
     getUserData();
   }, []);
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: "black",
       }}
     >
-      <SafeAreaView>
-        <StatusBar style="light"/>
-        <Header username={userdata && userdata.usernmae} />
-        <Userprofileimage />
-      </SafeAreaView>
-    </ScrollView>
+      <StatusBar style="light" />
+      <Header username={userdata && userdata.usernmae} />
+      <Userprofileimage />
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({});

@@ -3,10 +3,16 @@ import React from "react";
 
 export default function Video() {
   return (
-    <View>
+    <View
+      style={{
+        height: "100%",
+        backgroundColor: "black",
+      }}
+    >
       <Text
         style={{
           color: "white",
+          alignContent: "center",
         }}
       >
         Video

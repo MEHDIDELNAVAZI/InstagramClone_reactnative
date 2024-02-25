@@ -3,7 +3,12 @@ import React from "react";
 
 export default function Contact() {
   return (
-    <View>
+    <View
+      style={{
+        backgroundColor: "black",
+        height: "100%",
+      }}
+    >
       <Text
         style={{
           color: "white",
