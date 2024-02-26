@@ -59,6 +59,7 @@ export default function Addnewpost({ navigation }) {
               const downloadURL = await getDownloadURL(
                 uploudeprocess.snapshot.ref
               );
+              console.log("done");
               resolve(downloadURL);
             } catch (error) {
               console.log("Error getting download URL:", error);

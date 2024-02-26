@@ -11,7 +11,7 @@ function Posts() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null); // Change Error to error for consistency
   const [loading, setLoading] = useState(true);
-  
+
   async function getPostData() {
     try {
       const querySnapshot = await getDocs(

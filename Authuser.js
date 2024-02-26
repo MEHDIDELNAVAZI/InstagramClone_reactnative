@@ -28,11 +28,6 @@ export default function Authuser() {
 
   const Tab = createBottomTabNavigator();
 
-  const tabBarOptions = {
-    activeTintColor: "white",
-    inactiveTintColor: "white",
-  };
-
   const screenOptions = ({ route }) => ({
     tabBarStyle: {
       backgroundColor: "black",
@@ -59,10 +54,7 @@ export default function Authuser() {
   return (
     <NavigationContainer>
       {user ? (
-        <Tab.Navigator
-          tabBarOptions={tabBarOptions}
-          screenOptions={screenOptions}
-        >
+        <Tab.Navigator screenOptions={screenOptions}>
           <Tab.Screen name="Home" component={Home} />
           <Tab.Screen name="Explor" component={Explor} />
           <Tab.Screen name="Addnewpost" component={Addnewpost} />

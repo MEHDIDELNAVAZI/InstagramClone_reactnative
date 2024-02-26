@@ -1,4 +1,12 @@
-import { StyleSheet, View, Image, Dimensions, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Skeletonloading from "../skeleton";
 import { auth, db } from "../../firebase";
@@ -6,47 +14,54 @@ import { getDocs, collection } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import PostretreiveError from "./PostretreiveError";
 import { useImageUpload } from "../../context/Doesimageuplouded";
+import { err } from "react-native-svg";
 
 function Posts() {
   const user = auth.currentUser;
   const [data, setData] = useState([]);
-  const [error, setError] = useState(null); // Change Error to error for consistency
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const { isImageUploaded } = useImageUpload();
 
-  async function getPostData() {
-    try {
-      const querySnapshot = await getDocs(
-        collection(db, "users", user.email, "posts")
-      );
-      const postData = [];
-      querySnapshot.forEach((doc, index) => {
-        postData.push({
-          id: index,
-          data: doc.data(),
+   function getPostData() {
+    getDocs(collection(db, "users", user.email, "posts"))
+      .then((querySnapshot) => {
+        const postData = [];
+        querySnapshot.forEach((doc, index) => {
+          postData.push({
+            id: index,
+            data: doc.data(),
+          });
         });
+        setData(postData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("Error retrieving data:", error); // Log the error
+        setError(error.message); // Set the error state with the error message
+        setLoading(false);
+        throw error;
       });
-      setData(postData);
-      setLoading(false);
-    } catch (error) {
-      setError(error); // Set the error state to the caught error
-      setLoading(false); // Also set loading to false to stop the loading indicator
-    }
   }
-
   useEffect(() => {
     getPostData();
   }, []);
 
+  useEffect(() => {
+    console.log("sdcsd shut up vibosdcnjasd ckasdc");
+  }, [error]);
+
   useFocusEffect(
     React.useCallback(() => {
-      console.log(isImageUploaded);
-      if (isImageUploaded) {
-        getPostData();
-        console.log("hey new image uplouded");
-      }
+      // Here you can call getPostData again if necessary
     }, [])
   );
+
+  const handleReload = () => {
+    setLoading(true); // Show loading indicator
+    setError(null); // Reset error state
+    getPostData(); // Fetch data again
+  };
 
   return (
     <View
@@ -55,7 +70,12 @@ function Posts() {
       }}
     >
       {error ? (
-        <PostretreiveError />
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+          <TouchableOpacity onPress={handleReload}>
+            <Text style={styles.reloadText}>Reload</Text>
+          </TouchableOpacity>
+        </View>
       ) : loading ? (
         <Skeletonloading />
       ) : (
@@ -84,11 +104,24 @@ function Posts() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   image: {
     height: 100,
     marginBottom: 2,
+  },
+  errorContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "black",
+    height: 400,
+  },
+  errorText: {
+    color: "white",
+    marginBottom: 10,
+  },
+  reloadText: {
+    color: "blue",
+    textDecorationLine: "underline",
   },
 });
 

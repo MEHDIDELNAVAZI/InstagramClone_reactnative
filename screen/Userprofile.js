@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../components/userprofile/Header";
 import Userprofileimage from "../components/userprofile/userprofileimage";
@@ -6,8 +6,6 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import Animateddiv from "../components/userprofile/animatedview";
-import { View } from "moti";
 
 export default function Userprofile() {
   const user = auth.currentUser;
@@ -23,7 +21,7 @@ export default function Userprofile() {
     } catch (error) {}
   }
   useEffect(() => {
-    getUserData();
+    
   }, []);
 
   return (
@@ -35,10 +33,9 @@ export default function Userprofile() {
     >
       <SafeAreaView>
         <StatusBar style="light" />
-        <Header username={userdata && userdata.usernmae} />
+        <Header username={"dsd"} />
         <Userprofileimage />
       </SafeAreaView>
-      <Animateddiv />
     </View>
   );
 }
