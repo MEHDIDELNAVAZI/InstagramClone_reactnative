@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -23,10 +22,8 @@ function Signup({ navigation }) {
     password: Yup.string().required("Required"),
   });
   const [loading, setLoading] = useState(false);
-  const getrandomimageprofile = async () => {
-    const res = await fetch("https://randomuser.me/api");
-    const data = await res.json();
-    return data.results[0].picture.large;
+  const getrandomimageprofile = async (username) => {
+    return `https://ui-avatars.com/api/?name=${username}`;
   };
   const onSignup = async (email, password, username) => {
     setLoading(true); // Set loading to true when signup process starts
@@ -38,7 +35,7 @@ function Signup({ navigation }) {
         password
       );
       // Step 2: Add user details to Firestore
-      const imageUrl = await getrandomimageprofile(); // Fetch the random image URL
+      const imageUrl = await getrandomimageprofile(username); // Fetch the random image URL
       await setDoc(doc(db, "users", userCredential.user.email), {
         owner_id: userCredential.user.uid,
         usernmae: username,

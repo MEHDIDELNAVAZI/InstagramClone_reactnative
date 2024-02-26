@@ -30,17 +30,10 @@ function Userprofileimage() {
       } else {
         console.log("No such document!");
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
   useEffect(() => {
     getUserData();
-  }, []);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getpostdata();
   }, []);
 
   return (
@@ -228,41 +221,33 @@ function Userprofileimage() {
           <AntDesign name="adduser" size={24} color="white" />
         </TouchableOpacity>
       </View>
+      <View>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+              if (route.name === "Posts") {
+                iconName = focused ? "newspaper" : "newspaper-outline"; // Example icon for the "Posts" tab
+              } else if (route.name === "Video") {
+                iconName = focused ? "videocam" : "videocam-outline"; // Example icon for the "Video" tab
+              } else if (route.name === "Contact") {
+                iconName = focused ? "person" : "person-outline"; // Example icon for the "Contact" tab
+              }
+              // Return an Ionicons component with the appropriate icon name, color, and size
+              return <Ionicons name={iconName} size={25} color={"white"} />;
+            },
 
-      <Tab.Navigator
-        style={{
-          marginTop: 20,
-        }}
-        tabBarOptions={{
-          showLabel: false, // add this line to hide tab label
-          style: {
-            backgroundColor: "black", //color you want to change
-          },
-        }}
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            if (route.name === "Posts") {
-              iconName = focused ? "newspaper" : "newspaper-outline"; // Example icon for the "Posts" tab
-            } else if (route.name === "Video") {
-              iconName = focused ? "videocam" : "videocam-outline"; // Example icon for the "Video" tab
-            } else if (route.name === "Contact") {
-              iconName = focused ? "person" : "person-outline"; // Example icon for the "Contact" tab
-            }
-            // Return an Ionicons component with the appropriate icon name, color, and size
-            return <Ionicons name={iconName} size={25} color={"white"} />;
-          },
-          tabBarStyle: { backgroundColor: "black" },
-          lazy: true,
-          style: {
-            backgroundColor: "black", //color you want to change
-          },
-        })}
-      >
-        <Tab.Screen name={"Posts"} component={Posts} />
-        <Tab.Screen name="Video" component={Video} />
-        <Tab.Screen name="Contact" component={Contact} />
-      </Tab.Navigator>
+            lazy: true,
+            style: {
+              backgroundColor: "white", //color you want to change
+            },
+          })}
+        >
+          <Tab.Screen name={"Posts"} component={Posts} />
+          <Tab.Screen name="Video" component={Video} />
+          <Tab.Screen name="Contact" component={Contact} />
+        </Tab.Navigator>
+      </View>
     </>
   );
 }

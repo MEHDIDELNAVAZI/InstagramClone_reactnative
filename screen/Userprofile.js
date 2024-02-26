@@ -6,6 +6,8 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import Animateddiv from "../components/userprofile/animatedview";
+import { View } from "moti";
 
 export default function Userprofile() {
   const user = auth.currentUser;
@@ -25,16 +27,19 @@ export default function Userprofile() {
   }, []);
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: "black",
       }}
     >
-      <StatusBar style="light" />
-      <Header username={userdata && userdata.usernmae} />
-      <Userprofileimage />
-    </SafeAreaView>
+      <SafeAreaView>
+        <StatusBar style="light" />
+        <Header username={userdata && userdata.usernmae} />
+        <Userprofileimage />
+      </SafeAreaView>
+      <Animateddiv />
+    </View>
   );
 }
 const styles = StyleSheet.create({});

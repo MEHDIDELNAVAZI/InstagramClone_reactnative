@@ -5,12 +5,14 @@ import { auth, db } from "../../firebase";
 import { getDocs, collection } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import PostretreiveError from "./PostretreiveError";
+import { useImageUpload } from "../../context/Doesimageuplouded";
 
 function Posts() {
   const user = auth.currentUser;
   const [data, setData] = useState([]);
   const [error, setError] = useState(null); // Change Error to error for consistency
   const [loading, setLoading] = useState(true);
+  const { isImageUploaded } = useImageUpload();
 
   async function getPostData() {
     try {
@@ -36,13 +38,13 @@ function Posts() {
     getPostData();
   }, []);
 
-  useEffect(() => {
-    console.log(error); // Log the error for debugging purposes
-  }, [error]);
-
   useFocusEffect(
     React.useCallback(() => {
-      getPostData();
+      console.log(isImageUploaded);
+      if (isImageUploaded) {
+        getPostData();
+        console.log("hey new image uplouded");
+      }
     }, [])
   );
 
@@ -50,7 +52,6 @@ function Posts() {
     <View
       style={{
         backgroundColor: "black",
-        height: "100%",
       }}
     >
       {error ? (
@@ -61,13 +62,18 @@ function Posts() {
         <FlatList
           data={data}
           numColumns={3}
+          style={{
+            height: "100%",
+          }}
           renderItem={({ item }) => (
             <View style={{ marginLeft: 2 }}>
               <Image
                 source={{ uri: item.data.imageUrl }}
                 style={[
                   styles.image,
-                  { width: Dimensions.get("window").width / 3 - 1 },
+                  {
+                    width: Dimensions.get("window").width / 3 - 1,
+                  },
                 ]}
               />
             </View>

@@ -18,7 +18,7 @@ export const ProgressProvider = ({ children }) => {
         progress,
         updateProgress,
         progressisactive,
-        updateProgressisactive
+        updateProgressisactive,
       }}
     >
       {children}

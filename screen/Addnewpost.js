@@ -15,15 +15,17 @@ import Header from "../components/addnewpost/Header";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Divider } from "@rneui/themed";
-import app, { auth, storage } from "../firebase";
+import app, { auth, db, storage } from "../firebase";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Entypo } from "@expo/vector-icons";
 import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
 import { useProgress } from "../context/ProgressContext";
+import { useImageUpload } from "../context/Doesimageuplouded";
 
 export default function Addnewpost({ navigation }) {
+  const { setIsImageUploaded } = useImageUpload();
   const useremail = auth.currentUser.email;
   const [image, setImage] = useState(null);
   const { updateProgress } = useProgress();
@@ -57,7 +59,6 @@ export default function Addnewpost({ navigation }) {
               const downloadURL = await getDownloadURL(
                 uploudeprocess.snapshot.ref
               );
-              console.log("Download URL:", downloadURL);
               resolve(downloadURL);
             } catch (error) {
               console.log("Error getting download URL:", error);
@@ -66,8 +67,6 @@ export default function Addnewpost({ navigation }) {
           }
         );
       });
-    } else {
-      //  handle video uplouding to fire base
     }
   }
   const pickImage = async () => {
@@ -76,7 +75,7 @@ export default function Addnewpost({ navigation }) {
       mediaTypes: ImagePicker.image,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.2,
+      quality: 0.09,
     });
     if (!result.canceled) {
       const response = result.assets[0].uri;
@@ -85,13 +84,11 @@ export default function Addnewpost({ navigation }) {
   };
   const imageplaceholder =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s";
-  const [thumbnail, setthumbnail] = useState();
   const Addpostschema = Yup.object().shape({
     caption: Yup.string()
       .min(2, "Too Short caption !")
       .max(50, "Too Long caption !"),
   });
-  const db = getFirestore(app);
   async function addnewpost(useremail, values) {
     const imageurl = await uplouddata(image, "image");
     const userPostsRef = collection(db, "users", useremail, "posts");
@@ -118,7 +115,7 @@ export default function Addnewpost({ navigation }) {
           validationSchema={Addpostschema}
           onSubmit={(values) => {
             if (image) {
-              addnewpost(useremail, values);
+              addnewpost(auth.currentUser.email, values);
               navigation.goBack();
             } else {
             }

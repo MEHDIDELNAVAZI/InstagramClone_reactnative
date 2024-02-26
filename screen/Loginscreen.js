@@ -11,8 +11,8 @@ import {
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInput } from "react-native-gesture-handler";
-import {auth} from "../firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Loginscreen({ navigation }) {
   const Loginschema = Yup.object().shape({
@@ -36,7 +36,6 @@ export default function Loginscreen({ navigation }) {
         console.error("Sign in error:", errorCode, errorMessage);
       });
   };
-
   return (
     <SafeAreaView
       style={{
