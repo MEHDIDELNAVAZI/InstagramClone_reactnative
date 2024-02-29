@@ -6,7 +6,6 @@ export default function Video() {
     <View
       style={{
         height: "100%",
-        backgroundColor: "black",
       }}
     >
       <Text

@@ -1,52 +1,57 @@
 import { useReducer } from "react";
-import { StyleSheet, Pressable, View, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Pressable,
+  View,
+  FlatList,
+  Dimensions,
+} from "react-native";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
 
 export default function Skeletonloading() {
-  const [dark, toggle] = useReducer((s) => !s, true);
-  const colorMode = dark ? "dark" : "light";
-  function renderposts(item) {
+  function renderposts(item, index) {
     return (
       <View
         style={{
           marginTop: 10,
+          marginLeft: index !== 0 ? 3 : 9,
         }}
       >
-        <Spacer height={8} />
-        <Skeleton colorMode={colorMode} width={"100%"} height={150} />
+        <Skeleton
+          colorMode={"dark"}
+          width={Dimensions.get("window").width / 3 - 9}
+          height={100}
+        />
       </View>
     );
   }
-  const skeletondata = Array(6).fill(0);
+  const skeletondata = Array(20).fill(0);
   return (
-    <Pressable onPress={toggle} style={styles.container}>
+    <Pressable style={styles.container}>
       <MotiView
         transition={{
           type: "timing",
         }}
-        style={[styles.container, styles.padded]}
-        animate={{ backgroundColor: dark ? "#000000" : "#ffffff" }}
+        style={[styles.container]}
+        animate={{ backgroundColor: "#000000" }}
       >
         <Spacer />
         <FlatList
           data={skeletondata}
           renderItem={renderposts}
           keyExtractor={(item, index) => String(index)}
-          numColumns={2}
+          numColumns={3}
         />
       </MotiView>
     </Pressable>
   );
 }
 
-const Spacer = ({ height = 16 }) => <View style={{ height }} />;
+const Spacer = ({ height = 20 }) => <View style={{ height }} />;
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-  },
-  padded: {
-    padding: 16,
   },
 });

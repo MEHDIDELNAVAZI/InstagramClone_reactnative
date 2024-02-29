@@ -13,17 +13,23 @@ import Reels from "./screen/Reels";
 import Userprofile from "./screen/Userprofile";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import app from "./firebase";
+import app, { auth } from "./firebase";
+import { ActivityIndicator } from "react-native";
+import LoadingComponent from "./components/Loadngcomponent";
 
 export default function Authuser() {
   const Stack = createStackNavigator();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth(app);
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setLoading(false); // Set loading to false once user state is determined
     });
+
+    // Clean up subscription on unmount
+    return unsubscribe;
   }, []);
 
   const Tab = createBottomTabNavigator();
@@ -50,6 +56,11 @@ export default function Authuser() {
     },
     headerShown: false,
   });
+
+  if (loading) {
+    // Render a loading indicator while authentication status is being determined
+    return <LoadingComponent />;
+  }
 
   return (
     <NavigationContainer>

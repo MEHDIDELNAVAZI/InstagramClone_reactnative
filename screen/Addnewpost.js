@@ -98,7 +98,6 @@ export default function Addnewpost({ navigation }) {
       imageUrl: imageurl,
     });
   }
-
   return (
     <>
       <StatusBar style="light" />

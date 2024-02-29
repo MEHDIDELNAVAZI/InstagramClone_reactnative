@@ -12,14 +12,6 @@ import ProgressBar from "../components/home/ProgressBar";
 function Home({ navigation }) {
   const [useremail, setemailuser] = useState();
   const { progress, progressisactive } = useProgress();
-  useEffect(() => {
-    const auth = getAuth(app);
-    const user = auth.currentUser;
-    if (user !== null) {
-      const emailUser = user.email;
-      setemailuser(emailUser);
-    }
-  }, []);
   return (
     <>
       <StatusBar style="light" />

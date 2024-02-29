@@ -5,7 +5,6 @@ export default function Contact() {
   return (
     <View
       style={{
-        backgroundColor: "black",
         height: "100%",
       }}
     >

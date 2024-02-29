@@ -1,13 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
-import { useState } from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
@@ -16,46 +7,26 @@ import Posts from "../userprofile/Posts";
 import Video from "../userprofile/Video";
 import Contact from "../userprofile/Contact";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useRef } from "react";
-import { Dimensions, Button, Animated } from "react-native";
+import { Dimensions, Button } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
-function Userprofileimage() {
+
+
+function Userprofileimage({ profileimage }) {
   const Tab = createMaterialTopTabNavigator();
-  const user = auth.currentUser;
-  const [userdata, setuserdata] = useState(null);
-  async function getUserData() {
-    try {
-      const userref = doc(db, "users", user.email);
-      const docSnap = await getDoc(userref);
-      if (docSnap.exists) {
-        setuserdata(docSnap.data());
-      } else {
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.log("jahsdbcjahsdbchjasbdcjhasbdjhcbasjhdc");
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.image,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.09,
+    });
+    if (!result.canceled) {
+      const response = result.assets[0].uri;
+      setImage(response);
     }
-  }
-  useEffect(() => {}, []);
-
-  const popupanim = useRef(new Animated.Value(0)).current;
-  const popup = () => {
-    // Will change popupanim value to 1 in 5 seconds
-    Animated.timing(popupanim, {
-      toValue: 1, // change from 0 to 1
-      duration: 400,
-      useNativeDriver: true,
-    }).start();
   };
-  const popout = () => {
-    // Will change popupanim value to 1 in 5 seconds
-    Animated.timing(popupanim, {
-      toValue: 0, // change from 0 to 1
-      duration: 400,
-      useNativeDriver: true,
-    }).start();
-  };
-
   return (
     <>
       <View>
@@ -68,7 +39,9 @@ function Userprofileimage() {
           <View>
             <Image
               source={{
-                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s",
+                uri: profileimage
+                  ? profileimage
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefVf1IYhNffMEpd7ho5ElzL-mW_U0XFboJQjvtAF_YQ&s",
               }}
               style={{
                 width: 100,
@@ -92,7 +65,7 @@ function Userprofileimage() {
                 borderColor: "black",
               }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity onPress={pickImage}>
                 <AntDesign name="plus" size={24} color="white" />
               </TouchableOpacity>
             </View>
@@ -202,7 +175,6 @@ function Userprofileimage() {
               style={{
                 color: "white",
               }}
-              onPress={popup}
             >
               Edit profile
             </Text>
@@ -248,10 +220,21 @@ function Userprofileimage() {
         >
           <Tab.Navigator
             screenOptions={({ route }) => ({
+              tabBarIndicatorStyle: {
+                backgroundColor: "red",
+              },
+              style: {
+                backgroundColor: "transparent",
+              },
+              style: {
+                backgroundColor: "black",
+                color: "red",
+              },
               tabBarStyle: { backgroundColor: "black", marginTop: 20 },
               tabBarIndicatorStyle: {
                 backgroundColor: "white",
               },
+
               tabBarShowIcon: true,
               tabBarShowLabel: false,
               tabBarIcon: ({ focused, color, size }) => {
@@ -269,45 +252,31 @@ function Userprofileimage() {
               lazy: true,
             })}
           >
-            <Tab.Screen name={"Posts"} component={Posts} />
-            <Tab.Screen name="Video" component={Video} />
-            <Tab.Screen name="Contact" component={Contact} />
+            <Tab.Screen
+              options={{ backgroundColor: "red" }}
+              name={"Posts"}
+              component={Posts}
+              tabBarColor={{
+                backgroundColor: "black",
+              }}
+            />
+            <Tab.Screen
+              options={{ backgroundColor: "black" }}
+              name="Video"
+              component={Video}
+            />
+            <Tab.Screen
+              options={{ backgroundColor: "black" }}
+              name="Contact"
+              component={Contact}
+            />
           </Tab.Navigator>
         </View>
       </View>
 
       <View style={styles.buttonRow}>
-        <Button title="popup view" onPress={popup} />
+        <Button title="popup view" />
       </View>
-      <Animated.View
-        style={[
-          styles.fadingContainer,
-          {
-            // Bind opacity to animated value
-            transform: [
-              {
-                translateY: popupanim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [Dimensions.get("window").height, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TouchableOpacity onPress={popout}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={styles.fadingText}>Edit Profile</Text>
-          <Text></Text>
-        </View>
-      </Animated.View>
     </>
   );
 }
@@ -322,6 +291,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    top: 100,
     height: Dimensions.get("window").height, // Adjust the height as needed
     backgroundColor: "black",
   },
