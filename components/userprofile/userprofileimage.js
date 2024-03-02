@@ -9,8 +9,7 @@ import Contact from "../userprofile/Contact";
 import { Ionicons } from "@expo/vector-icons";
 import { Dimensions, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-
-
+import { Entypo } from "@expo/vector-icons";
 
 function Userprofileimage({ profileimage }) {
   const Tab = createMaterialTopTabNavigator();
@@ -54,7 +53,7 @@ function Userprofileimage({ profileimage }) {
               style={{
                 width: 30,
                 height: 30,
-                backgroundColor: "blue",
+                backgroundColor: "#6dadf0",
                 justifyContent: "center",
                 position: "absolute",
                 alignItems: "center",
@@ -66,7 +65,7 @@ function Userprofileimage({ profileimage }) {
               }}
             >
               <TouchableOpacity onPress={pickImage}>
-                <AntDesign name="plus" size={24} color="white" />
+                <Entypo name="plus" size={20} color="white" />
               </TouchableOpacity>
             </View>
           </View>

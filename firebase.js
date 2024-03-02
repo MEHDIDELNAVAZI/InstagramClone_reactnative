@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { initializeAuth } from "firebase/auth";
-import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getReactNativePersistence } from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,6 +18,7 @@ const firebaseConfig = {
 var app = initializeApp(firebaseConfig);
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+  enablePersistence: true,
 });
 const storage = getStorage(app);
 const db = initializeFirestore(app, {

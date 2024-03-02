@@ -12,6 +12,7 @@ import Skeletonloading from "../skeleton";
 import { auth, db } from "../../firebase";
 import { getDocs, collection } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
+import { disableNetwork } from "firebase/firestore";
 
 function Posts() {
   const user = auth.currentUser;
@@ -20,6 +21,7 @@ function Posts() {
   const [loading, setLoading] = useState(true);
 
   async function getPostData() {
+    await disableNetwork(db);
     try {
       const querySnapshot = await getDocs(
         collection(db, "users", user.email, "posts")
@@ -27,17 +29,36 @@ function Posts() {
       const postData = [];
       querySnapshot.forEach((doc, index) => {
         postData.push({
-          id: index,
+          id: doc.id,
           data: doc.data(),
         });
       });
       setData(postData);
       setLoading(false);
     } catch (error) {
-      console.log(error);
-      console.log("Hey there is an error fetching data ");
+      if (error.code === "unavailable") {
+        // Firestore is in offline mode
+        console.log("Offline mode: Retrieving data from cache...");
+        const cachedQuerySnapshot = await getDocsFromCache(
+          collection(db, "users", user.email, "posts")
+        );
+        const postData = [];
+        cachedQuerySnapshot.forEach((doc, index) => {
+          postData.push({
+            id: doc.id,
+            data: doc.data(),
+          });
+        });
+        setData(postData);
+        setLoading(false);
+      } else {
+        // Other errors
+        console.error("Error fetching data:", error);
+        console.log("Hey there is an error fetching data");
+      }
     }
   }
+
   useEffect(() => {
     getPostData();
   }, []);
